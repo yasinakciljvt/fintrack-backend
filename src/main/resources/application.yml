@@ -1,0 +1,60 @@
+spring:
+  application:
+    name: fintrack
+  datasource:
+    url: jdbc:postgresql://localhost:5432/fintrack
+    username: fintrack_user
+    password: fintrack_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: fintrack-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+jwt:
+  secret: fintrack-super-secret-key-must-be-at-least-32-chars
+  expiration: 86400000 # 24 saat (ms)
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:postgresql://postgres:5432/fintrack
+  data:
+    redis:
+      host: redis
+  kafka:
+    bootstrap-servers: kafka:9092
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
