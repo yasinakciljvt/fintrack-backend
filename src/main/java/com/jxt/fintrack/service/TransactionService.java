@@ -5,7 +5,6 @@ import com.jxt.fintrack.dto.response.TransactionResponse;
 import com.jxt.fintrack.entity.Category;
 import com.jxt.fintrack.entity.Transaction;
 import com.jxt.fintrack.entity.User;
-import com.jxt.fintrack.kafka.KafkaProducerService;
 import com.jxt.fintrack.repository.BudgetRepository;
 import com.jxt.fintrack.repository.CategoryRepository;
 import com.jxt.fintrack.repository.TransactionRepository;
@@ -28,7 +27,7 @@ public class TransactionService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final BudgetRepository budgetRepository;
-    private final KafkaProducerService kafkaProducerService;
+    private final NotificationService notificationService;
 
     private User getCurrentUser() {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -139,7 +138,7 @@ public class TransactionService {
 
                     if (totalSpent != null && totalSpent.compareTo(budget.getLimitAmount()) >= 0
                             && !budget.getNotified()) {
-                        kafkaProducerService.sendBudgetAlert(user.getEmail(), category.getName(),
+                        notificationService.sendBudgetAlert(user.getEmail(), category.getName(),
                                 budget.getLimitAmount(), totalSpent);
                         budget.setNotified(true);
                     }
